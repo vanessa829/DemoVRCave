@@ -1,50 +1,71 @@
 using UnityEngine;
 
-// Garante que este objeto tenha sempre um AudioSource
 [RequireComponent(typeof(AudioSource))]
 public class AmbienceSound : MonoBehaviour
 {
     private AudioSource audioSource;
-    private bool hasPlayerEntered = false; // Para garantir que o som sÛ toca uma vez
+    private bool isPlayerInside = false;
 
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
-        // Garante que o som n„o toca ao iniciar a cena
         audioSource.playOnAwake = false;
-    }
-
-    // Esta funÁ„o È chamada AUTOMATICAMENTE pelo Unity quando
-    // um outro collider (marcado como trigger) entra neste.
-    private void OnTriggerEnter(Collider other)
-    {
         
-        // Verifica se o objeto que entrou tem a tag "Player" E se o som ainda n„o tocou
-        if (other.CompareTag("Player") && !hasPlayerEntered)
+        BoxCollider boxCollider = GetComponent<BoxCollider>();
+        if (boxCollider != null && boxCollider.isTrigger)
         {
-            Debug.Log("Jogador entrou na ·rea! A tocar o som.");
-
-            // Toca o som
-            audioSource.Play();
-
-            // Marca que o jogador j· entrou para n„o repetir o som
-            hasPlayerEntered = true;
+            Debug.Log("‚úì BoxCollider configurado como Trigger");
+        }
+        else
+        {
+            Debug.LogError("‚ùå BoxCollider precisa estar como Trigger!");
         }
     }
 
-    public void Start()
+    void Start()
     {
-        Debug.Log("Script iniciado");
+        Debug.Log($"Script iniciado em: {gameObject.name}");
     }
 
-    // (Opcional) Se quiser que o som pare quando o jogador sai
+    // Para Character Controller, use OnTriggerEnter/Exit normalmente
+    // mas certifique-se que o XR Origin tem um Collider adicional
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log($"OnTriggerEnter: {other.gameObject.name} (Tag: {other.tag})");
+        
+        // Verifica se √© o player OU se √© um filho do player (como a c√¢mera)
+        if (other.CompareTag("Player") || other.transform.root.CompareTag("Player"))
+        {
+            if (!isPlayerInside)
+            {
+                Debug.Log("‚úì Jogador ENTROU na √°rea! Tocando som.");
+                audioSource.Play();
+                isPlayerInside = true;
+            }
+        }
+    }
+
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        Debug.Log($"OnTriggerExit: {other.gameObject.name} (Tag: {other.tag})");
+        
+        if (other.CompareTag("Player") || other.transform.root.CompareTag("Player"))
         {
-            Debug.Log("Jogador saiu da ·rea! A parar o som.");
-            audioSource.Stop();
-            hasPlayerEntered = false; // Permite que o som toque novamente se o jogador reentrar
+            if (isPlayerInside)
+            {
+                Debug.Log("‚úì Jogador SAIU da √°rea! Parando som.");
+                audioSource.Stop();
+                isPlayerInside = false;
+            }
+        }
+    }
+
+    // M√©todo alternativo para debug - mostra quando h√° overlap
+    private void OnTriggerStay(Collider other)
+    {
+        if (!isPlayerInside)
+        {
+            Debug.Log($"OnTriggerStay: {other.gameObject.name} est√° dentro mas som n√£o tocou ainda");
         }
     }
 }
