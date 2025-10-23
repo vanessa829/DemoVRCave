@@ -2,50 +2,51 @@ using UnityEngine;
 
 public class DoorInteraction : MonoBehaviour
 {
-    // Arraste aqui no Inspector o objeto que tem o componente Animator 
-    [Tooltip("O Animator que controla a animac„o da janela.")]
-    public Animator windowAnimator;
+    [Header("Refer√™ncias das Portas")]
+    [Tooltip("Arraste o Animator da porta esquerda para aqui.")]
+    public Animator leftDoorAnimator;
+    [Tooltip("Arraste o Animator da porta direita para aqui.")]
+    public Animator rightDoorAnimator;
 
-    // O nome do par‚metro Trigger no Animator Controller para ABRIR
-    [Tooltip("O nome exato do Trigger no Animator para abrir a janela.")]
+    [Header("Refer√™ncias de √Åudio")]
+    [Tooltip("Arraste o AudioSource que tem o som da porta a abrir.")]
+    public AudioSource doorAudioSource;
+
+    [Header("Nome da Anima√ß√£o")]
+    [Tooltip("O nome do Trigger no Animator para ABRIR as portas.")]
     public string openTriggerName = "Open";
 
-    // --- NOVO ---
-    // O nome do par‚metro Trigger no Animator Controller para FECHAR
-    [Tooltip("O nome exato do Trigger no Animator para fechar a janela.")]
-    public string closeTriggerName = "Close";
+    // Vari√°vel de controlo para garantir que a a√ß√£o s√≥ acontece uma vez.
+    private bool haveDoorsBeenOpened = false;
 
-    // --- NOVO ---
-    // Vari·vel para guardar o estado da janela (false = fechada, true = aberta)
-    private bool isWindowOpen = false;
-
-    // Renomeamos a funÁ„o para ser mais clara. Agora ela alterna o estado.
-    public void ToggleWindowState()
+    // Esta √© a fun√ß√£o p√∫blica que ser√° chamada pela intera√ß√£o (Near/Far Interactor)
+    public void OpenDoorsOnce()
     {
-        // Verificamos se a referÍncia do Animator foi definida no Inspector.
-        if (windowAnimator == null)
+        
+        // Se as portas j√° foram abertas, a fun√ß√£o termina imediatamente e n√£o faz mais nada.
+        if (haveDoorsBeenOpened)
         {
-            Debug.LogError("ERRO: O Animator n„o foi atribuÌdo no script WindowInteraction!", this.gameObject);
-            return; // Sai da funÁ„o se o animator n„o existir.
+            Debug.Log("As portas j√° foram abertas. Nenhuma a√ß√£o ser√° executada.");
+            return;
         }
+
+        // Verifica se todas as refer√™ncias foram atribu√≠das no Inspector
+        if (leftDoorAnimator == null || rightDoorAnimator == null || doorAudioSource == null)
+        {
+            Debug.LogError("ERRO: Uma ou mais refer√™ncias (Animators ou AudioSource) n√£o foram atribu√≠das no CoordinatedDoorController!", this.gameObject);
+            return;
+        }
+
+        Debug.Log("Primeira intera√ß√£o! A abrir ambas as portas e a tocar o som.");
+
+        // Aciona a anima√ß√£o de ABRIR em ambas as portas.
+        leftDoorAnimator.SetTrigger(openTriggerName);
+        rightDoorAnimator.SetTrigger(openTriggerName);
+
+        // Toca o som da porta.
+        doorAudioSource.Play();
 
         
-        // Se a janela N√O estiver aberta...
-        if (isWindowOpen == false)
-        {
-            // ...ent„o acionamos a animaÁ„o de ABRIR.
-            Debug.Log("Acionando trigger para ABRIR: " + openTriggerName);
-            windowAnimator.SetTrigger(openTriggerName);
-            // E atualizamos o estado para dizer que a janela agora est· ABERTA.
-            isWindowOpen = true;
-        }
-        else // Se a janela J¡ estiver aberta...
-        {
-            // ...ent„o acionamos a animaÁ„o de FECHAR.
-            Debug.Log("Acionando trigger para FECHAR: " + closeTriggerName);
-            windowAnimator.SetTrigger(closeTriggerName);
-            // E atualizamos o estado para dizer que a janela agora est· FECHADA.
-            isWindowOpen = false;
-        }
+        haveDoorsBeenOpened = true;
     }
 }

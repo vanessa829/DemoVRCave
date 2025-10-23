@@ -1,0 +1,74 @@
+# Blender 4.1.1 MTL File: 'bab.blend'
+# www.blender.org
+
+newmtl Green
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/0_Green_BaseColor.png
+map_Ns C:/0_Green_Roughness.png
+map_refl C:/0_Green_Metallic.png
+map_Bump -bm 1.000000 C:/0_Green_Normal.png
+
+newmtl Magenta
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/0_Magenta_BaseColor.png
+map_Ns C:/0_Magenta_Roughness.png
+map_refl C:/0_Magenta_Metallic.png
+map_Bump -bm 1.000000 C:/0_Magenta_Normal.png
+
+newmtl Material.003
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/0_Red_BaseColor.png
+map_Ns C:/0_Red_Roughness.png
+map_refl C:/0_Red_Metallic.png
+map_Bump -bm 1.000000 C:/0_Red_Normal.png
+
+newmtl Material.004
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/0_Cyan_BaseColor.png
+map_Ns C:/0_Cyan_Roughness.png
+map_refl C:/0_Cyan_Metallic.png
+map_Bump -bm 1.000000 C:/0_Cyan_Normal.png
+
+newmtl Material.005
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/0_Blue_BaseColor.png
+map_Ns C:/0_Blue_Roughness.png
+map_refl C:/0_Blue_Metallic.png
+map_Bump -bm 1.000000 C:/0_Blue_Normal.png
+
+newmtl Orange
+Ka 1.000000 1.000000 1.000000
+Ks 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd C:/0_Orange_BaseColor.png
+map_Ns C:/0_Orange_Roughness.png
+map_refl C:/0_Orange_Metallic.png
+map_Bump -bm 1.000000 C:/0_Orange_Normal.png
