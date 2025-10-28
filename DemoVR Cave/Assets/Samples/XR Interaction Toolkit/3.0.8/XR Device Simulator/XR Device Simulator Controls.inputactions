@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "XR Device Simulator Controls",
     "maps": [
         {
@@ -63,7 +64,7 @@
                     "name": "Manipulate Left",
                     "type": "Button",
                     "id": "07c46cc4-c35d-4364-a878-68fad8ab8c64",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -334,7 +335,7 @@
                 {
                     "name": "",
                     "id": "fcfb16fb-edee-474c-b1f2-f10b2a0a3569",
-                    "path": "<Keyboard>/leftShift",
+                    "path": "<Keyboard>/f1",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -345,7 +346,7 @@
                 {
                     "name": "",
                     "id": "e791caef-78d3-4f68-9104-212f73ac0642",
-                    "path": "<Keyboard>/space",
+                    "path": "<Keyboard>/f2",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

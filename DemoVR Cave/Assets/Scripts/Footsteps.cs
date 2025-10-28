@@ -1,103 +1,86 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(AudioSource))]
 public class Footsteps : MonoBehaviour
 {
-     [Header("Audio")]
-    [SerializeField] private AudioClip[] footstepSounds;
-    
-    [Header("Timing")]
-    [SerializeField] private float walkStepInterval = 0.5f;
-    [SerializeField] private float runStepInterval = 0.3f;
-    
-    [Header("Volume")]
-    [SerializeField] private float walkVolume = 0.6f;
-    [SerializeField] private float runVolume = 0.8f;
-    
-    [Header("Fade Out")]
-    [SerializeField] private bool useFadeOut = true;
-    [SerializeField] private float fadeOutSpeed = 5f;
-    
+    [Header("Audio")]
+    [Tooltip("O som de caminhada contínuo. Deve ser um loop.")]
+    [SerializeField] private AudioClip walkingSound;
+
+    [Header("Volume e Transição")]
+    [Tooltip("O volume máximo que o som de caminhada deve atingir.")]
+    [SerializeField] private float maxVolume = 0.8f;
+    [Tooltip("A velocidade com que o som aparece (fade in) e desaparece (fade out).")]
+    [SerializeField] private float fadeSpeed = 2.0f;
+
+    // --- NOVAS ADIÇÕES PARA A CORRIDA ---
+    [Header("Configurações de Corrida")]
+    [Tooltip("O pitch (tom) do som quando está a andar normalmente.")]
+    [SerializeField] private float walkPitch = 1.0f;
+    [Tooltip("O pitch (tom) do som quando está a correr. Um valor mais alto soa mais rápido.")]
+    [SerializeField] private float sprintPitch = 1.5f;
+
     [Header("Input Actions")]
     [SerializeField] private InputActionReference moveAction;
-    [SerializeField] private InputActionReference sprintAction;
-    
-    private AudioSource currentStepSource;
-    private AudioSource[] stepSources; // Pool de AudioSources
-    private int currentSourceIndex = 0;
-    
-    private float stepTimer = 0f;
+    [SerializeField] private InputActionReference sprintAction; // <-- NOVO
+
+    private AudioSource walkingAudioSource;
     private bool isMoving = false;
-    private bool wasMoving = false;
-    private bool isRunning = false;
-    private bool isFadingOut = false;
+    private bool isSprinting = false; // <-- NOVO
 
     void OnEnable()
     {
         if (moveAction != null)
             moveAction.action.Enable();
-        if (sprintAction != null)
-            sprintAction.action.Enable();
+        if (sprintAction != null) // <-- NOVO
+            sprintAction.action.Enable(); // <-- NOVO
     }
 
     void OnDisable()
     {
         if (moveAction != null)
             moveAction.action.Disable();
-        if (sprintAction != null)
-            sprintAction.action.Disable();
+        if (sprintAction != null) // <-- NOVO
+            sprintAction.action.Disable(); // <-- NOVO
     }
 
     void Awake()
     {
-        // Cria pool de 2 AudioSources (para overlap de sons)
-        stepSources = new AudioSource[2];
-        
-        for (int i = 0; i < stepSources.Length; i++)
-        {
-            GameObject sourceObj = new GameObject($"FootstepSource_{i}");
-            sourceObj.transform.SetParent(transform);
-            
-            AudioSource source = sourceObj.AddComponent<AudioSource>();
-            source.playOnAwake = false;
-            source.loop = false;
-            source.spatialBlend = 0f;
-            
-            stepSources[i] = source;
-        }
-        
-        currentStepSource = stepSources[0];
+        // Configura o AudioSource principal
+        walkingAudioSource = GetComponent<AudioSource>();
+        walkingAudioSource.clip = walkingSound;
+        walkingAudioSource.loop = true; // O som deve estar em loop
+        walkingAudioSource.playOnAwake = false;
+        walkingAudioSource.volume = 0f; // Começa em silêncio
     }
 
     void Update()
     {
         CheckMovement();
-        
-        // Detecta quando para de mover
-        if (wasMoving && !isMoving)
+
+        if (isMoving)
         {
-            OnStopMoving();
-        }
-        // Detecta quando começa a mover (cancela fade out)
-        else if (!wasMoving && isMoving)
-        {
-            OnStartMoving();
-        }
-        
-        if (isMoving && !isFadingOut)
-        {
-            ProcessFootsteps();
-        }
-        else if (isFadingOut)
-        {
-            ProcessFadeOut();
+            // Se está a mover-se, faz fade in do som
+            ProcessFadeIn();
         }
         else
         {
-            stepTimer = 0f;
+            // Se está parado, faz fade out do som
+            ProcessFadeOut();
         }
-        
-        wasMoving = isMoving;
+
+        // --- NOVA LÓGICA PARA O PITCH ---
+        // Ajusta o pitch do som com base no estado de corrida
+        if (isSprinting)
+        {
+            walkingAudioSource.pitch = sprintPitch;
+        }
+        else
+        {
+            walkingAudioSource.pitch = walkPitch;
+        }
+        // ---------------------------------
     }
 
     void CheckMovement()
@@ -107,117 +90,47 @@ public class Footsteps : MonoBehaviour
             isMoving = false;
             return;
         }
-        
+
         Vector2 moveInput = moveAction.action.ReadValue<Vector2>();
-        
-        if (Mathf.Abs(moveInput.x) < 0.1f && Mathf.Abs(moveInput.y) < 0.1f)
-        {
-            moveInput = Vector2.zero;
-        }
-        
-        isMoving = moveInput.magnitude > 0.3f;
-        
+        isMoving = moveInput.magnitude > 0.1f;
+
+        // --- NOVA LÓGICA PARA DETETAR A CORRIDA ---
         if (sprintAction != null)
         {
-            isRunning = sprintAction.action.ReadValue<float>() > 0.5f && isMoving;
+            // A corrida só é possível se o jogador já se estiver a mover
+            isSprinting = isMoving && sprintAction.action.ReadValue<float>() > 0.5f;
         }
+        // -----------------------------------------
     }
 
-    void ProcessFootsteps()
+    void ProcessFadeIn()
     {
-        if (footstepSounds.Length == 0) return;
-        
-        stepTimer += Time.deltaTime;
-        float currentInterval = isRunning ? runStepInterval : walkStepInterval;
-        
-        if (stepTimer >= currentInterval)
+        // Se o som não estiver a tocar, começa a tocar
+        if (!walkingAudioSource.isPlaying)
         {
-            PlayFootstep();
-            stepTimer = 0f;
+            walkingAudioSource.Play();
         }
-    }
 
-    void PlayFootstep()
-    {
-        // Alterna entre AudioSources do pool
-        currentSourceIndex = (currentSourceIndex + 1) % stepSources.Length;
-        currentStepSource = stepSources[currentSourceIndex];
-        
-        AudioClip clip = footstepSounds[Random.Range(0, footstepSounds.Length)];
-        currentStepSource.pitch = Random.Range(0.9f, 1.1f);
-        float volume = isRunning ? runVolume : walkVolume;
-        
-        currentStepSource.PlayOneShot(clip, volume);
-        
-        Debug.Log($"Passo tocado! Source: {currentSourceIndex}");
-    }
-
-    void OnStopMoving()
-    {
-        Debug.Log("Parou de mover!");
-        
-        if (useFadeOut)
+        // Aumenta o volume gradualmente até ao máximo
+        if (walkingAudioSource.volume < maxVolume)
         {
-            // Inicia fade out suave
-            isFadingOut = true;
-        }
-        else
-        {
-            // Para imediatamente
-            StopAllFootsteps();
-        }
-    }
-
-    void OnStartMoving()
-    {
-        Debug.Log("Começou a mover!");
-        isFadingOut = false;
-        
-        // Restaura volumes
-        foreach (var source in stepSources)
-        {
-            source.volume = 1f;
+            walkingAudioSource.volume += fadeSpeed * Time.deltaTime;
+            walkingAudioSource.volume = Mathf.Min(walkingAudioSource.volume, maxVolume);
         }
     }
 
     void ProcessFadeOut()
     {
-        bool anyPlaying = false;
-        
-        foreach (var source in stepSources)
+        // Diminui o volume gradualmente até zero
+        if (walkingAudioSource.volume > 0)
         {
-            if (source.isPlaying)
+            walkingAudioSource.volume -= fadeSpeed * Time.deltaTime;
+
+            if (walkingAudioSource.volume <= 0.01f)
             {
-                // Fade out gradual
-                source.volume -= fadeOutSpeed * Time.deltaTime;
-                
-                if (source.volume <= 0.01f)
-                {
-                    source.Stop();
-                    source.volume = 1f; // Restaura para próximo uso
-                }
-                else
-                {
-                    anyPlaying = true;
-                }
+                walkingAudioSource.volume = 0f;
+                walkingAudioSource.Pause();
             }
         }
-        
-        // Se nenhum som está tocando, termina o fade out
-        if (!anyPlaying)
-        {
-            isFadingOut = false;
-        }
-    }
-
-    void StopAllFootsteps()
-    {
-        foreach (var source in stepSources)
-        {
-            source.Stop();
-            source.volume = 1f;
-        }
-        
-        isFadingOut = false;
     }
 }
