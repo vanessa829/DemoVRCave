@@ -1,16 +1,24 @@
 using UnityEngine;
+using System.Collections; 
+using TMPro;
 
 public class PowerRun : MonoBehaviour
 {
-    [Header("Referências")]
+[Header("Referências")]
     public PhysicsBasedLocomotion playerLocomotion;
     public GameObject powerIndicatorUI;
     public Footsteps playerFootsteps;
 
+    [Header("Feedback para o Jogador")]
+    public GameObject tutorialMessageObject;
+    public float tutorialMessageDuration = 2.0f;
+
     [Header("Efeitos")]
     public AudioClip collectSoundClip;
     [Range(0f, 1f)]
-    public float collectSoundVolume = 0.7f; // Volume padrão de 70%
+    public float collectSoundVolume = 0.5f;
+
+    private bool hasBeenCollected = false;
 
     void Awake()
     {
@@ -19,21 +27,40 @@ public class PowerRun : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.root.CompareTag("Player"))
+        if (hasBeenCollected || !other.transform.root.CompareTag("Player"))
         {
-            Debug.Log("Power-up de corrida apanhado!");
-
-            if (playerLocomotion != null) playerLocomotion.canSprint = true;
-            if (playerFootsteps != null) playerFootsteps.canSprint = true;
-            if (powerIndicatorUI != null) powerIndicatorUI.SetActive(true);
-
-            // Pede ao PowerSound para tocar o som
-            if (collectSoundClip != null && PowerSound.instance != null)
-            {
-                PowerSound.instance.PlaySound(collectSoundClip, collectSoundVolume);
-            }
-
-            Destroy(gameObject);
+            return;
         }
+        hasBeenCollected = true;
+
+        Debug.Log("Power-up de corrida apanhado!");
+
+        if (playerLocomotion != null) playerLocomotion.canSprint = true;
+        if (playerFootsteps != null) playerFootsteps.canSprint = true;
+        if (powerIndicatorUI != null) powerIndicatorUI.SetActive(true);
+
+        if (tutorialMessageObject != null)
+        {
+        
+            playerLocomotion.StartCoroutine(ShowTutorialMessage());
+        }
+
+        
+        if (collectSoundClip != null)
+        {
+            AudioSource.PlayClipAtPoint(collectSoundClip, transform.position, collectSoundVolume);
+        }
+
+        // Desativa o objeto do power-up
+        gameObject.SetActive(false);
+    }
+
+    private IEnumerator ShowTutorialMessage()
+    {
+        tutorialMessageObject.SetActive(true);
+        yield return new WaitForSeconds(tutorialMessageDuration);
+        tutorialMessageObject.SetActive(false);
     }
 }
+     
+

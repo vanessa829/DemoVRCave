@@ -29,4 +29,5 @@ public class PowerSound : MonoBehaviour
             sfxSource.PlayOneShot(clip, volume);
         }
     }
+    
 }
