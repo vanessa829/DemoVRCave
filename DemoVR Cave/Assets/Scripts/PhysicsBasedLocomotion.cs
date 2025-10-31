@@ -6,25 +6,19 @@ using UnityEngine.InputSystem;
 public class PhysicsBasedLocomotion : MonoBehaviour
 {
     [Header("Referências de Input e Jogador")]
-    [Tooltip("A ação de input para o movimento do analógico (ex: XRI LeftHand/Move).")]
     public InputActionProperty moveAction;
-
-    [Header("Input Actions")]
-    [Tooltip("A ação de input para correr (ex: PlayerGlobal/Sprint).")]
-    [SerializeField] private InputActionReference sprintAction; 
-
-    [Tooltip("O Transform da câmara do jogador para determinar a direção 'frente'.")]
+    public InputActionProperty sprintAction;
     public Transform headTransform;
 
     [Header("Parâmetros de Movimento")]
-    [Tooltip("A velocidade de caminhada do jogador em metros por segundo.")]
-    public float walkSpeed = 2.0f;
+    public float walkSpeed = 0.6f;
+    public float sprintSpeed = 4.0f;
+    public float gravity = 0;
 
-    [Tooltip("A velocidade de corrida do jogador em metros por segundo.")]
-    public float sprintSpeed = 4.0f; 
 
-    [Tooltip("A força da gravidade a ser aplicada ao jogador.")]
-    public float gravity = -9.81f;
+    [Header("Controlo de Habilidade")]
+    [Tooltip("Controla se o jogador tem a habilidade de correr.")]
+    public bool canSprint = false; 
 
     private CharacterController characterController;
     private Vector3 playerVelocity;
@@ -37,18 +31,18 @@ public class PhysicsBasedLocomotion : MonoBehaviour
     private void OnEnable()
     {
         moveAction.action.Enable();
-        sprintAction.action.Enable(); // <-- ATIVAR A NOVA AÇÃO
+        sprintAction.action.Enable();
     }
 
     private void OnDisable()
     {
         moveAction.action.Disable();
-        sprintAction.action.Disable(); // <-- DESATIVAR A NOVA AÇÃO
+        sprintAction.action.Disable();
     }
 
     void Update()
     {
-        // --- PARTE 1: GRAVIDADE (sem alterações) ---
+        // Gravidade (se gravity for diferente de 0)
         if (characterController.isGrounded && playerVelocity.y < 0)
         {
             playerVelocity.y = -2f;
@@ -56,20 +50,19 @@ public class PhysicsBasedLocomotion : MonoBehaviour
         playerVelocity.y += gravity * Time.deltaTime;
         characterController.Move(playerVelocity * Time.deltaTime);
 
-        // --- PARTE 2: MOVIMENTO DO JOGADOR (com alterações) ---
+        // Movimento
         Vector2 input = moveAction.action.ReadValue<Vector2>();
         if (input == Vector2.zero)
         {
             return;
         }
 
-        // --- NOVA LÓGICA DE CORRIDA ---
-        // Verifica se a ação de correr está a ser pressionada
-        bool isSprinting = sprintAction.action.ReadValue<float>() > 0.5f;
         
-        // Escolhe a velocidade correta com base no estado de corrida
+        // Verifica se a ação de correr está a ser pressionada E se o jogador PODE correr
+        bool isSprinting = canSprint && sprintAction.action.ReadValue<float>() > 0.5f;
+        
         float currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
-        // -----------------------------
+        // ------------------------------------
 
         Vector3 forward = headTransform.forward;
         Vector3 right = headTransform.right;
@@ -79,8 +72,6 @@ public class PhysicsBasedLocomotion : MonoBehaviour
         right.Normalize();
 
         Vector3 desiredMoveDirection = forward * input.y + right * input.x;
-
-        // Usa a 'currentSpeed' em vez da 'moveSpeed' fixa
         characterController.Move(desiredMoveDirection * currentSpeed * Time.deltaTime);
     }
 }

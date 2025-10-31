@@ -5,54 +5,47 @@ using UnityEngine.InputSystem;
 public class Footsteps : MonoBehaviour
 {
     [Header("Audio")]
-    [Tooltip("O som de caminhada contínuo. Deve ser um loop.")]
     [SerializeField] private AudioClip walkingSound;
 
     [Header("Volume e Transição")]
-    [Tooltip("O volume máximo que o som de caminhada deve atingir.")]
     [SerializeField] private float maxVolume = 0.8f;
-    [Tooltip("A velocidade com que o som aparece (fade in) e desaparece (fade out).")]
     [SerializeField] private float fadeSpeed = 2.0f;
 
-    // --- NOVAS ADIÇÕES PARA A CORRIDA ---
     [Header("Configurações de Corrida")]
-    [Tooltip("O pitch (tom) do som quando está a andar normalmente.")]
     [SerializeField] private float walkPitch = 1.0f;
-    [Tooltip("O pitch (tom) do som quando está a correr. Um valor mais alto soa mais rápido.")]
     [SerializeField] private float sprintPitch = 1.5f;
+
+    [Header("Controlo de Habilidade")]
+    public bool canSprint = false; // Começa como 'false'
 
     [Header("Input Actions")]
     [SerializeField] private InputActionReference moveAction;
-    [SerializeField] private InputActionReference sprintAction; // <-- NOVO
+    [SerializeField] private InputActionReference sprintAction;
 
     private AudioSource walkingAudioSource;
     private bool isMoving = false;
-    private bool isSprinting = false; // <-- NOVO
+    private bool isSprinting = false;
+
 
     void OnEnable()
     {
-        if (moveAction != null)
-            moveAction.action.Enable();
-        if (sprintAction != null) // <-- NOVO
-            sprintAction.action.Enable(); // <-- NOVO
+        if (moveAction != null) moveAction.action.Enable();
+        if (sprintAction != null) sprintAction.action.Enable();
     }
 
     void OnDisable()
     {
-        if (moveAction != null)
-            moveAction.action.Disable();
-        if (sprintAction != null) // <-- NOVO
-            sprintAction.action.Disable(); // <-- NOVO
+        if (moveAction != null) moveAction.action.Disable();
+        if (sprintAction != null) sprintAction.action.Disable();
     }
 
     void Awake()
     {
-        // Configura o AudioSource principal
         walkingAudioSource = GetComponent<AudioSource>();
         walkingAudioSource.clip = walkingSound;
-        walkingAudioSource.loop = true; // O som deve estar em loop
+        walkingAudioSource.loop = true;
         walkingAudioSource.playOnAwake = false;
-        walkingAudioSource.volume = 0f; // Começa em silêncio
+        walkingAudioSource.volume = 0f;
     }
 
     void Update()
@@ -61,16 +54,13 @@ public class Footsteps : MonoBehaviour
 
         if (isMoving)
         {
-            // Se está a mover-se, faz fade in do som
             ProcessFadeIn();
         }
         else
         {
-            // Se está parado, faz fade out do som
             ProcessFadeOut();
         }
 
-        // --- NOVA LÓGICA PARA O PITCH ---
         // Ajusta o pitch do som com base no estado de corrida
         if (isSprinting)
         {
@@ -80,7 +70,6 @@ public class Footsteps : MonoBehaviour
         {
             walkingAudioSource.pitch = walkPitch;
         }
-        // ---------------------------------
     }
 
     void CheckMovement()
@@ -94,24 +83,19 @@ public class Footsteps : MonoBehaviour
         Vector2 moveInput = moveAction.action.ReadValue<Vector2>();
         isMoving = moveInput.magnitude > 0.1f;
 
-        // --- NOVA LÓGICA PARA DETETAR A CORRIDA ---
         if (sprintAction != null)
         {
-            // A corrida só é possível se o jogador já se estiver a mover
-            isSprinting = isMoving && sprintAction.action.ReadValue<float>() > 0.5f;
+            // A corrida só é possível se o jogador PODE correr, se está a mover-se, E se está a pressionar o botão
+            isSprinting = canSprint && isMoving && sprintAction.action.ReadValue<float>() > 0.5f;
         }
-        // -----------------------------------------
     }
 
     void ProcessFadeIn()
     {
-        // Se o som não estiver a tocar, começa a tocar
         if (!walkingAudioSource.isPlaying)
         {
             walkingAudioSource.Play();
         }
-
-        // Aumenta o volume gradualmente até ao máximo
         if (walkingAudioSource.volume < maxVolume)
         {
             walkingAudioSource.volume += fadeSpeed * Time.deltaTime;
@@ -121,11 +105,9 @@ public class Footsteps : MonoBehaviour
 
     void ProcessFadeOut()
     {
-        // Diminui o volume gradualmente até zero
         if (walkingAudioSource.volume > 0)
         {
             walkingAudioSource.volume -= fadeSpeed * Time.deltaTime;
-
             if (walkingAudioSource.volume <= 0.01f)
             {
                 walkingAudioSource.volume = 0f;
