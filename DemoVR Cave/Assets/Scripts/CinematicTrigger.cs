@@ -5,26 +5,17 @@ using UnityEngine.Playables;
 public class CinematicTrigger : MonoBehaviour
 {
     [Header("Referências da Cutscene")]
-    [Tooltip("O componente de script que controla o movimento do jogador (ex: PhysicsBasedLocomotion).")]
     public MonoBehaviour playerMovementScript;
-
-    [Tooltip("A câmara principal do jogador (a que está dentro do XR Origin).")]
     public Camera playerCamera;
-
-    [Tooltip("A segunda câmara, a da cutscene, que vai ser ativada.")]
     public Camera cutsceneCamera;
-
-    [Tooltip("O AudioSource com a música da cutscene.")]
     public AudioSource cutsceneAudio;
-
-    [Tooltip("(Opcional) Arraste o Playable Director se quiser iniciar uma Timeline também.")]
     public PlayableDirector cutsceneTimeline;
 
-    // --- NOVA ADIÇÃO ---
     [Header("Sons a Desativar")]
-    [Tooltip("Arraste para aqui todos os AudioSources do jogador que devem ser silenciados (passos, respiração, etc.).")]
     public AudioSource[] playerSoundsToMute;
 
+    [Header("UI a Desativar")]
+    public GameObject playerUIContainer;
 
     private bool hasBeenTriggered = false;
     private Collider triggerCollider; // Referência para o nosso próprio colisor
@@ -51,8 +42,11 @@ public class CinematicTrigger : MonoBehaviour
         Debug.Log("Jogador ativou a cutscene!");
         hasBeenTriggered = true;
 
+        // Desativa toda a UI do jogador.
+        playerUIContainer.SetActive(false);
+        Debug.Log("UI do jogador desativada.");
 
-        // 1. Silencia os sons do jogador
+        // Silencia os sons do jogador
         foreach (AudioSource audio in playerSoundsToMute)
         {
             if (audio != null)
@@ -62,23 +56,23 @@ public class CinematicTrigger : MonoBehaviour
             }
         }
 
-        // 2. Desativa o controlo de movimento do jogador.
+        // Desativa o controlo de movimento do jogador.
         playerMovementScript.enabled = false;
 
-        // 3. Desativa a câmara principal do jogador.
+        // Desativa a câmara principal do jogador.
         playerCamera.gameObject.SetActive(false);
 
-        // 4. Ativa a câmara da cutscene (e o seu Audio Listener, se o tiver).
+        // Ativa a câmara da cutscene (e o seu Audio Listener, se o tiver).
         cutsceneCamera.gameObject.SetActive(true);
 
-        // 5. Toca a música da cutscene.
+        // Toca a música da cutscene.
         if (!cutsceneAudio.gameObject.activeInHierarchy)
         {
             cutsceneAudio.gameObject.SetActive(true);
         }
         cutsceneAudio.Play();
 
-        // 6. (Opcional) Inicia a Timeline.
+        // Inicia a Timeline.
         if (cutsceneTimeline != null)
         {
             cutsceneTimeline.Play();
