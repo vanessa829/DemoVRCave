@@ -17,68 +17,92 @@ public class CinematicTrigger : MonoBehaviour
     [Header("UI a Desativar")]
     public GameObject playerUIContainer;
 
+    [Header("Sequência de Fim de Jogo")]
+    public GameObject highscoreUIObject;
+    public Credits creditsScript;
+
+    [Header("Referências do Jogo")]
+    public TimerCount timerScript; 
+
     private bool hasBeenTriggered = false;
-    private Collider triggerCollider; // Referência para o nosso próprio colisor
+    private Collider triggerCollider;
 
     void Awake()
     {
         triggerCollider = GetComponent<Collider>();
         triggerCollider.isTrigger = true;
+        if (highscoreUIObject != null) highscoreUIObject.SetActive(false);
+    }
+
+    private void OnEnable()
+    {
+        if (cutsceneTimeline != null) cutsceneTimeline.stopped += OnCutsceneFinished;
+    }
+
+    private void OnDisable()
+    {
+        if (cutsceneTimeline != null) cutsceneTimeline.stopped -= OnCutsceneFinished;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (hasBeenTriggered || !other.transform.root.CompareTag("Player"))
-        {
-            return;
-        }
+        if (hasBeenTriggered || !other.transform.root.CompareTag("Player")) return;
+        
+        hasBeenTriggered = true;
 
-        if (playerMovementScript == null || playerCamera == null || cutsceneCamera == null || cutsceneAudio == null)
+        // Isto acontece IMEDIATAMENTE quando o jogador entra no trigger.
+        if (HighscoreManager.instance != null && timerScript != null)
         {
-            Debug.LogError("ERRO: Uma ou mais referências não foram atribuídas no CinematicTrigger!", this.gameObject);
-            return;
+            // 1. Para o cronómetro e obtém o tempo final
+            float finalTime = timerScript.StopAndGetFinalTime();
+
+            // 2. Obtém o nome do jogador
+            string playerName = PlayerName.scene1 != null ? PlayerName.scene1.player_name : "Convidado";
+
+            // 3. Manda o HighscoreManager adicionar e guardar a nova entrada
+            HighscoreManager.instance.AddHighscoreEntry(playerName, finalTime);
+
+            Debug.Log("Score guardado para " + playerName + " com o tempo de " + finalTime + " segundos.");
+        }
+        else
+        {
+            Debug.LogError("HighscoreManager ou TimerScript não foram encontrados! O score não foi guardado.");
         }
 
         Debug.Log("Jogador ativou a cutscene!");
-        hasBeenTriggered = true;
 
-        // Desativa toda a UI do jogador.
         playerUIContainer.SetActive(false);
-        Debug.Log("UI do jogador desativada.");
-
-        // Silencia os sons do jogador
         foreach (AudioSource audio in playerSoundsToMute)
         {
-            if (audio != null)
-            {
-                audio.Stop(); // Ou audio.enabled = false;
-                audio.enabled = false;
-            }
+            if (audio != null) audio.enabled = false;
         }
-
-        // Desativa o controlo de movimento do jogador.
         playerMovementScript.enabled = false;
-
-        // Desativa a câmara principal do jogador.
         playerCamera.gameObject.SetActive(false);
-
-        // Ativa a câmara da cutscene (e o seu Audio Listener, se o tiver).
         cutsceneCamera.gameObject.SetActive(true);
-
-        // Toca a música da cutscene.
-        if (!cutsceneAudio.gameObject.activeInHierarchy)
-        {
-            cutsceneAudio.gameObject.SetActive(true);
-        }
         cutsceneAudio.Play();
-
-        // Inicia a Timeline.
-        if (cutsceneTimeline != null)
-        {
-            cutsceneTimeline.Play();
-        }
-
+        if (cutsceneTimeline != null) cutsceneTimeline.Play();
         triggerCollider.enabled = false;
-        Debug.Log("Trigger desativado para não ser chamado novamente.");
+    }
+
+    private void OnCutsceneFinished(PlayableDirector director)
+    {
+        Debug.Log("Cutscene terminada. A mostrar Highscores...");
+        if (highscoreUIObject != null)
+        {
+            highscoreUIObject.SetActive(true);
+        }
+    }
+
+    public void ShowCredits()
+    {
+        Debug.Log("Botão 'Next' pressionado. A iniciar os créditos...");
+        if (highscoreUIObject != null)
+        {
+            highscoreUIObject.SetActive(false);
+        }
+        if (creditsScript != null)
+        {
+            creditsScript.StartCredits();
+        }
     }
 }
