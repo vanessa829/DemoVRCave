@@ -306,15 +306,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d28f705476c80d47acb3dfade3d3142, type: 3}
   m_Name: MetaXRFoveationFeature Android
   m_EditorClassIdentifier: 
-  m_enabled: 1
-  <failedInitialization>k__BackingField: 0
-  nameUi: Meta XR Foveation
-  version: 1.0.0
-  featureIdInternal: com.meta.openxr.feature.foveation
-  openxrExtensionStrings: 'XR_FB_foveation XR_FB_foveation_configuration XR_FB_foveation_vulkan '
-  company: Meta
-  priority: 0
-  required: 0
 --- !u!114 &-6540448818219067812
 MonoBehaviour:
   m_ObjectHideFlags: 0
