@@ -1,15 +1,30 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class BunnaUI : MonoBehaviour
 {
     public Animator animator;
     public string sceneName;
+    public GameObject windowClosed;
+    public GameObject windowOpen;
+
 
     public void OnClickStart()
     {
 
-        animator.SetTrigger("StartWindow");
+
+
+        windowClosed.SetActive(false);
+        windowOpen.SetActive(true);
+
+        Animator anim = windowOpen.GetComponent<Animator>();
+        anim.Rebind();              
+        anim.Update(0f);
+        anim.SetTrigger("StartWindow");
+        
+
+
 
     }
 
@@ -17,6 +32,8 @@ public class BunnaUI : MonoBehaviour
     {
         SceneManager.LoadScene(sceneName);
     }
+
+  
 }
 
 
