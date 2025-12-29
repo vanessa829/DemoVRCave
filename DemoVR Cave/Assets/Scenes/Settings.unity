@@ -337,13 +337,13 @@ MonoBehaviour:
   m_MultiSelect: 0
   m_Options:
     m_Options:
-    - m_Text: Low
+    - m_Text: Small
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
     - m_Text: Medium
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
-    - m_Text: High
+    - m_Text: Large
       m_Image: {fileID: 0}
       m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_OnValueChanged:
@@ -412,6 +412,7 @@ GameObject:
   - component: {fileID: 43835841}
   - component: {fileID: 43835840}
   - component: {fileID: 43835839}
+  - component: {fileID: 43835842}
   m_Layer: 5
   m_Name: Back
   m_TagString: Untagged
@@ -482,7 +483,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 43835840}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 43835842}
+        m_TargetAssemblyTypeName: ScreenChanger, Assembly-CSharp
+        m_MethodName: ChangeScreen
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &43835840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -521,6 +534,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 43835837}
   m_CullTransparentMesh: 1
+--- !u!114 &43835842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 43835837}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8479f049fee0818418d42626224ebd11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneIndex: 1
 --- !u!1 &95272782
 GameObject:
   m_ObjectHideFlags: 0
@@ -890,7 +916,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Low
+  m_text: Small
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3853,7 +3879,7 @@ GameObject:
   - component: {fileID: 897034711}
   - component: {fileID: 897034710}
   m_Layer: 5
-  m_Name: Shadows
+  m_Name: Grafics
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4958,6 +4984,7 @@ GameObject:
   - component: {fileID: 1156247631}
   - component: {fileID: 1156247630}
   - component: {fileID: 1156247634}
+  - component: {fileID: 1156247635}
   m_Layer: 5
   m_Name: SettingsCanvas
   m_TagString: Untagged
@@ -5062,6 +5089,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullScreen: {fileID: 1147672347}
   audioMixer: {fileID: 24100000, guid: eb2db3d5c7adea142b4437e417f8096d, type: 2}
+  urpAsset: {fileID: 11400000, guid: 4b83569d67af61e458304325a23e5dfd, type: 2}
+  fullscreenToggle: {fileID: 1147672347}
+  shadowsToggle: {fileID: 1424972063}
+  particlesToggle: {fileID: 1180867425}
+  graphicsDropdown: {fileID: 875488424}
+  renderScaleDropdown: {fileID: 268264089}
+  uiSizeDropdown: {fileID: 22546412}
+  masterVolumeSlider: {fileID: 1695754803}
+  musicVolumeSlider: {fileID: 1680678813}
+  sfxVolumeSlider: {fileID: 1599080338}
+--- !u!114 &1156247635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1156247629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecf6f2068b973c44c8033f8f0eb7b3bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1168305360
 GameObject:
   m_ObjectHideFlags: 0
@@ -5556,8 +5605,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 160, y: 10.908997}
-  m_SizeDelta: {x: 81.421, y: 21.818}
+  m_AnchoredPosition: {x: 113.4, y: -157.3}
+  m_SizeDelta: {x: 119.9401, y: 23.0331}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1377946773
 MonoBehaviour:
@@ -5602,7 +5651,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1377946774}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1156247634}
+        m_TargetAssemblyTypeName: OptionsScreen, Assembly-CSharp
+        m_MethodName: ApplySettings
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1377946774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7176,7 +7237,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 19.5
+  m_fontSize: 18.9
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -7214,7 +7275,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: 0, w: 1.8628616}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
