@@ -14,31 +14,24 @@ public class AmbienceSound : MonoBehaviour
         BoxCollider boxCollider = GetComponent<BoxCollider>();
         if (boxCollider != null && boxCollider.isTrigger)
         {
-            Debug.Log("✓ BoxCollider configurado como Trigger");
+            //Debug.Log("BoxCollider configurado como Trigger");
         }
         else
         {
-            Debug.LogError("❌ BoxCollider precisa estar como Trigger!");
+            //Debug.LogError("BoxCollider precisa estar como Trigger!");
         }
     }
 
-    void Start()
-    {
-        Debug.Log($"Script iniciado em: {gameObject.name}");
-    }
-
-    // Para Character Controller, use OnTriggerEnter/Exit normalmente
-    // mas certifique-se que o XR Origin tem um Collider adicional
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"OnTriggerEnter: {other.gameObject.name} (Tag: {other.tag})");
+        //Debug.Log($"OnTriggerEnter: {other.gameObject.name} (Tag: {other.tag})");
         
-        // Verifica se é o player OU se é um filho do player (como a câmera)
+        // Verifica se é o player ou se é um filho do player 
         if (other.CompareTag("Player") || other.transform.root.CompareTag("Player"))
         {
             if (!isPlayerInside)
             {
-                Debug.Log("✓ Jogador ENTROU na área! Tocando som.");
+                //Debug.Log("Jogador ENTROU na área! Tocando som.");
                 audioSource.Play();
                 isPlayerInside = true;
             }
@@ -53,19 +46,18 @@ public class AmbienceSound : MonoBehaviour
         {
             if (isPlayerInside)
             {
-                Debug.Log("✓ Jogador SAIU da área! Parando som.");
+                //Debug.Log("Jogador SAIU da área! Parando som.");
                 audioSource.Stop();
                 isPlayerInside = false;
             }
         }
     }
 
-    // Método alternativo para debug - mostra quando há overlap
     private void OnTriggerStay(Collider other)
     {
         if (!isPlayerInside)
         {
-            Debug.Log($"OnTriggerStay: {other.gameObject.name} está dentro mas som não tocou ainda");
+            //Debug.Log($"OnTriggerStay: {other.gameObject.name} está dentro mas som não tocou ainda");
         }
     }
 }

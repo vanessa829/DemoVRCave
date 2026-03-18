@@ -50,16 +50,16 @@ public class CinematicTrigger : MonoBehaviour
         
         hasBeenTriggered = true;
 
-        // Isto acontece IMEDIATAMENTE quando o jogador entra no trigger.
+        // Isto acontece quando o jogador entra no trigger.
         if (HighscoreManager.instance != null && timerScript != null)
         {
-            // 1. Para o cronómetro e obtém o tempo final
+            // Para o cronómetro e obtém o tempo final
             float finalTime = timerScript.StopAndGetFinalTime();
 
-            // 2. Obtém o nome do jogador
-            string playerName = PlayerName.scene1 != null ? PlayerName.scene1.player_name : "Convidado";
+            // Obtém o nome do jogador
+            string playerName = PlayerName.scene1 != null ? PlayerName.scene1.playerName : "Convidado";
 
-            // 3. Manda o HighscoreManager adicionar e guardar a nova entrada
+            // Manda o HighscoreManager adicionar e guardar a nova entrada
             HighscoreManager.instance.AddHighscoreEntry(playerName, finalTime);
 
             Debug.Log("Score guardado para " + playerName + " com o tempo de " + finalTime + " segundos.");

@@ -4,9 +4,10 @@ using UnityEngine.SceneManagement;
 
 public class PlayerName : MonoBehaviour
 {
+    public static PlayerName instance;
     public static PlayerName scene1;
     public TMP_InputField inputField;
-    public string player_name;
+    public string playerName;
     private void Awake()
     {
         if (scene1 == null)
@@ -23,7 +24,7 @@ public class PlayerName : MonoBehaviour
 
     public void SetPlayerName()
     {
-        player_name = inputField.text;
+        playerName = inputField.text;
         SceneManager.LoadSceneAsync("Demo");
     }
 }

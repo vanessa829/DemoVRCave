@@ -22,7 +22,7 @@ public class HighscoreUI : MonoBehaviour
         string currentPlayerName = "Convidado"; 
         if (PlayerName.scene1 != null)
         {
-            currentPlayerName = PlayerName.scene1.player_name;
+            currentPlayerName = PlayerName.scene1.playerName;
         }
 
         // Pede a lista completa e ordenada de recordes

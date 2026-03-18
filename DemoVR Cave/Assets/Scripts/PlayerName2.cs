@@ -1,14 +1,23 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class PlayerName2 : MonoBehaviour
 {
-    public TextMeshProUGUI display_player_name;
+    public TextMeshProUGUI displayPlayerName;
+
     private void Awake()
     {
+        if (displayPlayerName == null) return;
 
-        display_player_name.text = PlayerName.scene1.player_name;
+        if (PlayerName.instance != null)
+        {
+            displayPlayerName.text = PlayerName.instance.playerName;
+        }
+        else
+        {
+            // Default text for testing directly in the Demo scene
+            displayPlayerName.text = "Guest Player";
+            Debug.Log("PlayerName2: No PlayerName instance found. Using default name.");
+        }
     }
-
 }
