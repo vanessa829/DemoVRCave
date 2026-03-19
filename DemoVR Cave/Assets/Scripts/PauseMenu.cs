@@ -3,109 +3,79 @@ using UnityEngine.InputSystem;
 
 public class PauseMenu : MonoBehaviour
 {
-    [SerializeField] private GameObject menuPanel; 
-    [SerializeField] private GameObject pauseButtonUI;
+    public static PauseMenu instance;
 
-    [Header("Input do Controle")]
-    [SerializeField] private InputActionReference menuAction;
+    [Header("UI Panels")]
+    public GameObject menuPanel; 
+    
+    [Header("Camera")]
+    public Transform headTransform; 
 
-    [Header("Componentes do Jogador a Desativar")]
-    [SerializeField] private MonoBehaviour playerMovementScript;
-    [SerializeField] private MonoBehaviour playerCameraScript; 
-    [SerializeField] private MonoBehaviour[] playerInteractors;
 
-    private bool isPaused = false;
+    [Header("Current State")]
+    public bool isPaused = false;
+    public bool isPauseBlocked = false;
 
-    private void OnEnable()
+    private float lastToggleTime = 0f;
+    private float toggleCooldown = 0.2f;
+
+    private void Awake()
     {
-        menuAction.action.Enable();
-        menuAction.action.performed += OnPauseButtonPressed;
-    }
-
-    private void OnDisable()
-    {
-        menuAction.action.Disable();
-        menuAction.action.performed -= OnPauseButtonPressed;
+        if (instance == null) instance = this;
     }
 
     void Start()
     {
-        menuPanel.SetActive(false);
-        Time.timeScale = 1;
-        isPaused = false;
+        Resume();
     }
 
-    private void OnPauseButtonPressed(InputAction.CallbackContext context)
+    public void OnPauseButtonPressed(InputAction.CallbackContext context)
     {
-        Debug.Log("<color=green>BOTÃO DE MENU PRESSIONADO!</color>");
-        if (isPaused)
+        if (Time.unscaledTime - lastToggleTime < toggleCooldown) return;
+
+        if (context.performed)
         {
-            Resume();
+            lastToggleTime = Time.unscaledTime;
+            HandlePauseToggle();
         }
-        else
-        {
-            Pause();
-        }
+    }
+
+    private void HandlePauseToggle()
+    {
+        if (isPauseBlocked) return;
+
+        if (isPaused) Resume();
+        else Pause();
     }
 
     public void Pause()
     {
         isPaused = true;
-        Time.timeScale = 0; 
-
-        if (playerMovementScript != null)
-            playerMovementScript.enabled = false;
-
-        if (playerCameraScript != null) 
-            playerCameraScript.enabled = false;
-
-        foreach (var interactor in playerInteractors)
+        Time.timeScale = 0f; 
+        
+        if (menuPanel != null)
         {
-            if (interactor != null)
-                interactor.enabled = false;
+            menuPanel.SetActive(true);
         }
-        
-        if (pauseButtonUI != null)
-            pauseButtonUI.SetActive(false);
-        
-        menuPanel.SetActive(true);
-        Debug.Log("Jogo Pausado");
+
     }
 
     public void Resume()
     {
         isPaused = false;
-        Time.timeScale = 1;
+        Time.timeScale = 1f;
 
-        if (playerMovementScript != null)
-            playerMovementScript.enabled = true;
-
-        if (playerCameraScript != null)
-            playerCameraScript.enabled = true;
-
-        // Reativa todos os interactors
-        foreach (var interactor in playerInteractors)
+        if (menuPanel != null)
         {
-            if (interactor != null)
-                interactor.enabled = true;
+            menuPanel.SetActive(false);
         }
 
-        if (pauseButtonUI != null)
-            pauseButtonUI.SetActive(true);
-
-        menuPanel.SetActive(false);
-        Debug.Log("Jogo Retomado");
     }
     
     public void ExitGame()
     {
-        Debug.Log("Botão de Sair Clicado!");
-
-        //No Editor do Unity
         #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-        
-        // Se for uma build do jogo
         #else
         Application.Quit();
         #endif

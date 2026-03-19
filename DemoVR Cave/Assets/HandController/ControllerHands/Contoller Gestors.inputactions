@@ -125,6 +125,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Menu Pause",
+            "id": "0dd0b89b-3401-4260-977e-07b50e1bf782",
+            "actions": [
+                {
+                    "name": "Esc",
+                    "type": "Button",
+                    "id": "3513de06-19e0-4148-93d9-302bf032238c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "7cabc695-89de-47b6-af63-446c557f1962",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Esc",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
