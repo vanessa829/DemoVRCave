@@ -63282,15 +63282,10 @@ MonoBehaviour:
       m_Flags: 0
     m_Reference: {fileID: -3888342219797191140, guid: d70ef52a62907e142b6efb390ad388dd, type: 3}
   headTransform: {fileID: 292778139}
-  leftHandController: {fileID: 1948881145}
-  rightHandCController: {fileID: 464015384}
   walkSpeed: 1.5
   sprintSpeed: 4
-  gravity: 0
-  bodyColliderTransform: {fileID: 1717954560488581575}
+  gravityMultiplier: -9.81
   bodyCollider: {fileID: 6520291406146827880}
-  bodyHeightMin: 1
-  bodyHeightMax: 2
   rbMass: 1
   canSprint: 0
 --- !u!136 &6520291406146827880
@@ -63300,7 +63295,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1717954560488581572}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 28f1e18ad78847d449dd86e1f4306a95, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

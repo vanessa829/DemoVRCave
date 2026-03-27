@@ -5,7 +5,7 @@ using TMPro;
 public class PowerRun : MonoBehaviour
 {
 [Header("Referências")]
-    public PhysicsBasedLocomotion playerLocomotion;
+    public PlayerMoviment playerLocomotion;
     public GameObject powerIndicatorUI;
     public Footsteps playerFootsteps;
 

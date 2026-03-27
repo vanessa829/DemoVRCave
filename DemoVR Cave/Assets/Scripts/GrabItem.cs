@@ -39,7 +39,7 @@ public class GrabItem : MonoBehaviour
             physicsBody.isKinematic = isKinematicOnReturn;
         }
 
-        var locomotion = Object.FindFirstObjectByType<PhysicsBasedLocomotion>();
+        var locomotion = Object.FindFirstObjectByType<PlayerMoviment>();
         if (locomotion != null) 
         {
             bodyCollider = locomotion.bodyCollider;

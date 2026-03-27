@@ -40,7 +40,7 @@ public class AmbienceSound : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log($"OnTriggerExit: {other.gameObject.name} (Tag: {other.tag})");
+        //Debug.Log($"OnTriggerExit: {other.gameObject.name} (Tag: {other.tag})");
         
         if (other.CompareTag("Player") || other.transform.root.CompareTag("Player"))
         {
